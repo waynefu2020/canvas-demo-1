@@ -14,28 +14,48 @@
     canvas.width = document.documentElement.clientWidth;
     canvas.height = document.documentElement.clientHeight;
     let ctx = canvas.getContext("2d");
-
-    let painting = false;
     ctx.fillStyle = "black";
     ctx.strokeStyle = "none";
 
-    canvas.onmousedown = () => {
-      painting = true;
+    function drawLine(x1, y1, x2, y2) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      // ctx.lineTo(0,500);
+      // ctx.closePath();
+      ctx.stroke();
     }
-    canvas.onmousemove = (e) => {
-      if(painting === true){
+    drawLine(0, 0, 500, 500)
+
+    let painting = false;
+
+    var isTouchDevice = "ontouchstart" in
+    document.documentElement;
+    if(isTouchDevice) {
+      canvas.ontouchmove = (e)=>{
+        let x = e.touches[0].clientX;
+        let y = e.touches[0].clientY;
         ctx.beginPath();
-        ctx.arc(e.clientX, e.clientY, 10, 0, 2 * Math.PI);
+        ctx.arc(x, y, 10, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.fill();
-      }else{
-        console.log("do nothing.")
+      }
+      
+    } else {
+        canvas.onmousedown = () => {
+        painting = true;
+      }
+      canvas.onmousemove = (e) => {
+        if(painting === true){
+          drawLine(0, 0, e.clientX, e.clientY);
+        }else{
+          console.log("do nothing.")
+        }
+      }
+      canvas.onmouseup = () => {
+        painting = false;
       }
     }
-    canvas.onmouseup = () => {
-      painting = false;
-    }
-
   </script>
 </body>
 </html>
